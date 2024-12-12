@@ -34,7 +34,6 @@ const followUnFollowUser = async (req, res) => {
             //unFollow
             await User.findByIdAndUpdate({ _id: id }, { $pull: { followers: req.user._id } });
             await User.findByIdAndUpdate({ _id: req.user._id }, { $pull: { following: id } });
-
             return res.status(200).json({ message: "Unfollow Succesfully" })
         }
         else {
