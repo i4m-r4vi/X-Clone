@@ -199,7 +199,7 @@ const getUserPost = async(req,res)=>{
                         )
         res.status(200).json(getPost)
     } catch (error) {
-        console.log(`Error in getUsername:${error}`);
+        console.log(`Error in getUserPost:${error}`);
         res.status(404).json({ error: "Internal Server Error" })
     }
 }

@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser'
 import userRoutes from './routes/user.routes.js'
 import cloudinary from 'cloudinary'
 import postRoutes from './routes/post.routes.js'
+import NotificationRoutes from './routes/notification.routes.js'
 
 dotenv.config()
 
@@ -26,6 +27,7 @@ app.use(bodyParser.urlencoded({extended:true}))
 app.use('/api/auth',authRoutes)
 app.use('/api/users',userRoutes)
 app.use('/api/posts',postRoutes)
+app.use('/api/notification',NotificationRoutes)
 
 app.get('/',(req,res)=>{
     res.send(`<h1>Hello World</h1>`)                
