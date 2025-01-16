@@ -12,7 +12,7 @@ const signUp = async (req, res) => {
         const existingEmail = await User.findOne({ email: email })
         const existingUsername = await User.findOne({ username: username })
         if (existingEmail || existingUsername) {
-            return res.status(400).json({ message: 'Already Exisiting User or Email' })
+            return res.status(400).json({ message: 'Already Existing User or Email' })
         }
         if (password.length < 6) {
             return res.status(400).json({ message: 'Password Must be Greater than 6' })
