@@ -6,10 +6,10 @@ const generateToken = (userId, res) => {
     })
 
     res.cookie("jwt", token, {
-        maxAge: 15*24*60*60*1000,
+        maxAge: 15 * 24 * 60 * 60 * 1000,
         httpOnly : true, //xss attacks
-        sameSite : "strict", //csrf attacks
-        secure : process.env.NODE_ENV !=="development"
+        sameSite : "None", //csrf attacks
+        secure :true
     })
 }
 
