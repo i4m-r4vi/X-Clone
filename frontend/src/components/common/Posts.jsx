@@ -4,13 +4,17 @@ import { useQuery,useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 
-const Posts = ({feedType}) => {
+const Posts = ({feedType,username,userId}) => {
 	const getPostEndPoint = ()=>{
 		switch (feedType) {
 			case "forYou":
 				return `${import.meta.env.VITE_APP_BACKEND}api/posts/getAllPost`
 			case "following":
 				return `${import.meta.env.VITE_APP_BACKEND}api/posts/follwingPost`
+			case "posts":
+				return `${import.meta.env.VITE_APP_BACKEND}api/posts/user/${username}`
+			case "likes":
+				return `${import.meta.env.VITE_APP_BACKEND}api/posts/likes/${userId}`;
 			default:
 				return `${import.meta.env.VITE_APP_BACKEND}api/posts/getAllPost`
 		}

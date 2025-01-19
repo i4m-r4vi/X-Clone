@@ -1,36 +1,55 @@
 import { Link } from "react-router-dom";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
-
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
 
 const NotificationPage = () => {
-	const isLoading = false;
-	const notifications = [
-		{
-			_id: "1",
-			from: {
-				_id: "1",
-				username: "johndoe",
-				profileImg: "/avatars/boy2.png",
+		const queryClient = useQueryClient();
+		const { data: notifications, isLoading } = useQuery({
+			queryKey: ["notifications"],
+			queryFn: async () => {
+				try {
+					const res = await fetch(`${import.meta.env.VITE_APP_BACKEND}api/notification`,{
+						credentials:'include',
+						method:"GET"
+					});
+					const data = await res.json();
+					if (!res.ok) throw new Error(data.error || "Something went wrong");
+					console.log(data)
+					return data;
+				} catch (error) {
+					throw new Error(error);
+				}
 			},
-			type: "follow",
-		},
-		{
-			_id: "2",
-			from: {
-				_id: "2",
-				username: "janedoe",
-				profileImg: "/avatars/girl1.png",
+		});
+	
+		const { mutate: deleteNotifications } = useMutation({
+			mutationFn: async () => {
+				try {
+					const res = await fetch(`${import.meta.env.VITE_APP_BACKEND}api/notification/deleteNoti`, {
+						credentials:'include',
+						method: "DELETE",
+					});
+					const data = await res.json();
+	
+					if (!res.ok) throw new Error(data.error || "Something went wrong");
+					return data;
+				} catch (error) {
+					throw new Error(error);
+				}
 			},
-			type: "like",
-		},
-	];
-
-	const deleteNotifications = () => {
-		alert("All notifications deleted");
-	};
+			onSuccess: () => {
+				toast.success("Notifications deleted successfully");
+				queryClient.invalidateQueries({ queryKey: ["notifications"] });
+			},
+			onError: (error) => {
+				toast.error(error.message);
+			},
+		});
+	
 
 	return (
 		<>

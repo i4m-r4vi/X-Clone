@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import LoadingSpinner from "./LoadingSpinner";
 import toast from "react-hot-toast";
+import { formatPostDate } from "../../utils/date";
 
 
 const Post = ({ post }) => {
@@ -64,28 +65,61 @@ const Post = ({ post }) => {
 				throw new Error(error)
 			}
 		},
-		onSuccess: () => {
-			toast.success("Successfully Liked", {
-				style: {
-					borderRadius: '10px',
-					background: '#333',
-					color: '#fff',
+		onSuccess: (updateLike) => {
+			queryClient.setQueryData(["posts"], (oldData) => {
+				if (!oldData) {
+					return oldData; 
+				} else {
+					return oldData.map((p) => {
+						if (p._id === post._id) {
+							return { ...p, like: updateLike };
+						} else {
+							return p;
+						}
+					})
 				}
 			})
-			queryClient.invalidateQueries({ queryKey: ["posts"] })
 		},
+		
 		onError: (error) => {
 			toast.error(error.message);
 		},
 	})
 
+	const { mutate: commentPost, isPending: isCommenting } = useMutation({
+		mutationFn: async () => {
+			try {
+				const res = await fetch(`${import.meta.env.VITE_APP_BACKEND}api/posts/comment/${post._id}`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					credentials:"include",
+					body: JSON.stringify({ text: comment }),
+				});
+				const data = await res.json();
 
+				if (!res.ok) {
+					throw new Error(data.error || "Something went wrong");
+				}
+				return data;
+			} catch (error) {
+				throw new Error(error);
+			}
+		},
+		onSuccess: () => {
+			toast.success("Comment posted successfully");
+			setComment("");
+			queryClient.invalidateQueries({ queryKey: ["posts"] });
+		},
+		onError: (error) => {
+			toast.error(error.message);
+		},
+	});
 
 	const isMyPost = authUser._id === post.user._id;
 
-	const formattedDate = "1h";
-
-	const isCommenting = false;
+	const formattedDate = formatPostDate(post.createdAt);
 
 	const handleDeletePost = () => {
 		const isConfirm = confirm("Wants to Delete the Post")
@@ -96,6 +130,8 @@ const Post = ({ post }) => {
 
 	const handlePostComment = (e) => {
 		e.preventDefault();
+		if (isCommenting) return;
+		commentPost();
 	};
 
 	const handleLikePost = () => {
