@@ -5,25 +5,69 @@ import { FaRegBookmark } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import LoadingSpinner from "./LoadingSpinner";
+import toast from "react-hot-toast";
+
 
 const Post = ({ post }) => {
 	const [comment, setComment] = useState("");
+	const { data: authUser } = useQuery({ queryKey: ["authUser"] })
 	const postOwner = post.user;
 	const isLiked = false;
+	const queryClient = useQueryClient()
 
-	const isMyPost = true;
+	const { mutate: deletePost, isPending: isDeleting } = useMutation({
+		mutationFn: async () => {
+			try {
+				const res = await fetch(`${import.meta.env.VITE_APP_BACKEND}api/posts/${post._id}`, {
+					method: "DELETE",
+					credentials: "include"
+				})
+				const data = await res.json();
+				if (!res.ok) {
+					throw new Error(data.error)
+				}
+				return data
+			} catch (error) {
+				throw new Error(error)
+			}
+		},
+		onSuccess: () => {
+			toast.success("Successfully Deleted", {
+				style: {
+					borderRadius: '10px',
+					background: '#333',
+					color: '#fff',
+				}
+			})
+			queryClient.invalidateQueries({ queryKey: ["posts"] })
+		},
+		onError: (error) => {
+			toast.error(error.message);
+		},
+	})
+
+
+
+	const isMyPost = authUser._id === post.user._id;
 
 	const formattedDate = "1h";
 
 	const isCommenting = false;
 
-	const handleDeletePost = () => {};
+	const handleDeletePost = () => {
+		const isConfirm = confirm("Wants to Delete the Post")
+		if (isConfirm) {
+			deletePost()
+		}
+	};
 
 	const handlePostComment = (e) => {
 		e.preventDefault();
 	};
 
-	const handleLikePost = () => {};
+	const handleLikePost = () => { };
 
 	return (
 		<>
@@ -36,7 +80,7 @@ const Post = ({ post }) => {
 				<div className='flex flex-col flex-1'>
 					<div className='flex gap-2 items-center'>
 						<Link to={`/profile/${postOwner.username}`} className='font-bold'>
-							{postOwner.fullName}
+							{postOwner.fullname}
 						</Link>
 						<span className='text-gray-700 flex gap-1 text-sm'>
 							<Link to={`/profile/${postOwner.username}`}>@{postOwner.username}</Link>
@@ -45,7 +89,8 @@ const Post = ({ post }) => {
 						</span>
 						{isMyPost && (
 							<span className='flex justify-end flex-1'>
-								<FaTrash className='cursor-pointer hover:text-red-500' onClick={handleDeletePost} />
+								{isDeleting ? <LoadingSpinner /> : <FaTrash className='cursor-pointer hover:text-red-500' onClick={handleDeletePost} />}
+
 							</span>
 						)}
 					</div>
@@ -135,11 +180,10 @@ const Post = ({ post }) => {
 								{isLiked && <FaRegHeart className='w-4 h-4 cursor-pointer text-pink-500 ' />}
 
 								<span
-									className={`text-sm text-slate-500 group-hover:text-pink-500 ${
-										isLiked ? "text-pink-500" : ""
-									}`}
+									className={`text-sm text-slate-500 group-hover:text-pink-500 ${isLiked ? "text-pink-500" : ""
+										}`}
 								>
-									{post.likes.length}
+									{post.like.length}
 								</span>
 							</div>
 						</div>
