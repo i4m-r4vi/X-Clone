@@ -23,7 +23,7 @@ const app = express()
 const PORT = process.env.PORT
 
 app.use(cors({
-    origin:"http://localhost:3000",
+    origin:`${process.env.FRONT_END}`,
     credentials: true
 }))
 app.use(express.json({
