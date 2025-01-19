@@ -115,7 +115,7 @@ const updateUser = async (req,res)=>{
             if(findingUser.coverImg){
                 await cloudinary.uploader.destroy(findingUser.coverImg.split("/").pop().split(".")[0])
             }
-            const uploadedResponse = await cloudinary.uploader.upload(profileImg)
+            const uploadedResponse = await cloudinary.uploader.upload(coverImg)
             coverImg = uploadedResponse.secure_url;
         }
 

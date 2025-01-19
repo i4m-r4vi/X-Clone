@@ -4,13 +4,13 @@ import { Link } from "react-router-dom";
 import Posts from "../../components/common/Posts";
 import ProfileHeaderSkeleton from "../../components/skeletons/ProfileHeaderSkeleton";
 import EditProfileModal from "./EditProfileModal";
-
-import { POSTS } from "../../utils/db/dummy";
-
+import { useQueryClient,useMutation,useQuery } from "@tanstack/react-query";
 import { FaArrowLeft } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
 import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
+import useUpdateUserProfile from "../../hooks/useUpdateUserProfile";
+import LoadingSpinner from "../../components/common/LoadingSpinner";
 
 const ProfilePage = () => {
 	const [coverImg, setCoverImg] = useState(null);
@@ -23,17 +23,10 @@ const ProfilePage = () => {
 	const isLoading = false;
 	const isMyProfile = true;
 
-	const user = {
-		_id: "1",
-		fullName: "John Doe",
-		username: "johndoe",
-		profileImg: "/avatars/boy2.png",
-		coverImg: "/cover.png",
-		bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-		link: "https://youtube.com/@asaprogrammer_",
-		following: ["1", "2", "3"],
-		followers: ["1", "2", "3"],
-	};
+	const {data:authUser} = useQuery({queryKey:["authUser"]})
+
+	const {updateProfile,isUpdatingProfile,} = useUpdateUserProfile()
+	const user = authUser
 
 	const handleImgChange = (e, state) => {
 		const file = e.target.files[0];
@@ -46,7 +39,6 @@ const ProfilePage = () => {
 			reader.readAsDataURL(file);
 		}
 	};
-
 	return (
 		<>
 			<div className='flex-[4_4_0]  border-r border-gray-700 min-h-screen '>
@@ -61,8 +53,8 @@ const ProfilePage = () => {
 									<FaArrowLeft className='w-4 h-4' />
 								</Link>
 								<div className='flex flex-col'>
-									<p className='font-bold text-lg'>{user?.fullName}</p>
-									<span className='text-sm text-slate-500'>{POSTS?.length} posts</span>
+									<p className='font-bold text-lg'>{user?.fullname}</p>
+									<span className='text-sm text-slate-500'>{user?.length} posts</span>
 								</div>
 							</div>
 							{/* COVER IMG */}
@@ -121,48 +113,49 @@ const ProfilePage = () => {
 								{(coverImg || profileImg) && (
 									<button
 										className='btn btn-primary rounded-full btn-sm text-white px-4 ml-2'
-										onClick={() => alert("Profile updated successfully")}
+										onClick={(e) => {e.preventDefault(); updateProfile({profileImg,coverImg})}}
 									>
 										Update
 									</button>
 								)}
+								{isUpdatingProfile && <LoadingSpinner size="sm"/>}
 							</div>
 
 							<div className='flex flex-col gap-4 mt-14 px-4'>
 								<div className='flex flex-col'>
-									<span className='font-bold text-lg'>{user?.fullName}</span>
-									<span className='text-sm text-slate-500'>@{user?.username}</span>
-									<span className='text-sm my-1'>{user?.bio}</span>
+									<span className='font-bold text-lg'>{authUser?.fullname}</span>
+									<span className='text-sm text-slate-500'>@{authUser?.username}</span>
+									<span className='text-sm my-1'>{authUser?.bio}</span>
 								</div>
 
 								<div className='flex gap-2 flex-wrap'>
-									{user?.link && (
+									{authUser?.link && (
 										<div className='flex gap-1 items-center '>
 											<>
 												<FaLink className='w-3 h-3 text-slate-500' />
 												<a
-													href='https://youtube.com/@asaprogrammer_'
+													href={`${authUser.link}`}
 													target='_blank'
 													rel='noreferrer'
 													className='text-sm text-blue-500 hover:underline'
 												>
-													youtube.com/@asaprogrammer_
+													`${authUser.link}`
 												</a>
 											</>
 										</div>
 									)}
 									<div className='flex gap-2 items-center'>
 										<IoCalendarOutline className='w-4 h-4 text-slate-500' />
-										<span className='text-sm text-slate-500'>Joined July 2021</span>
+										<span className='text-sm text-slate-500'>`${authUser.createdAt}`</span>
 									</div>
 								</div>
 								<div className='flex gap-2'>
 									<div className='flex gap-1 items-center'>
-										<span className='font-bold text-xs'>{user?.following.length}</span>
+										<span className='font-bold text-xs'>{authUser?.following.length}</span>
 										<span className='text-slate-500 text-xs'>Following</span>
 									</div>
 									<div className='flex gap-1 items-center'>
-										<span className='font-bold text-xs'>{user?.followers.length}</span>
+										<span className='font-bold text-xs'>{authUser?.followers.length}</span>
 										<span className='text-slate-500 text-xs'>Followers</span>
 									</div>
 								</div>

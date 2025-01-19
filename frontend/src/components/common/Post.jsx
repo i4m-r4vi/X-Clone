@@ -14,7 +14,7 @@ const Post = ({ post }) => {
 	const [comment, setComment] = useState("");
 	const { data: authUser } = useQuery({ queryKey: ["authUser"] })
 	const postOwner = post.user;
-	const isLiked = false;
+	const isLiked = post.like.includes(authUser._id) ;
 	const queryClient = useQueryClient()
 
 	const { mutate: deletePost, isPending: isDeleting } = useMutation({
@@ -48,6 +48,37 @@ const Post = ({ post }) => {
 		},
 	})
 
+	const {mutate:likedPost,isPending:isLiking} = useMutation({
+		mutationFn:async()=>{
+			try {
+				const res = await fetch(`${import.meta.env.VITE_APP_BACKEND}api/posts/like/${post._id}`, {
+					method: "POST",
+					credentials: "include"
+				})
+				const data = await res.json();
+				if (!res.ok) {
+					throw new Error(data.error)
+				}
+				return data
+			} catch (error) {
+				throw new Error(error)
+			}
+		},
+		onSuccess: () => {
+			toast.success("Successfully Liked", {
+				style: {
+					borderRadius: '10px',
+					background: '#333',
+					color: '#fff',
+				}
+			})
+			queryClient.invalidateQueries({ queryKey: ["posts"] })
+		},
+		onError: (error) => {
+			toast.error(error.message);
+		},
+	})
+
 
 
 	const isMyPost = authUser._id === post.user._id;
@@ -67,7 +98,10 @@ const Post = ({ post }) => {
 		e.preventDefault();
 	};
 
-	const handleLikePost = () => { };
+	const handleLikePost = () => {
+		if(isLiking) return ;
+		likedPost()
+	};
 
 	return (
 		<>
@@ -174,6 +208,7 @@ const Post = ({ post }) => {
 								<span className='text-sm text-slate-500 group-hover:text-green-500'>0</span>
 							</div>
 							<div className='flex gap-1 items-center group cursor-pointer' onClick={handleLikePost}>
+								{isLiking && <LoadingSpinner size="sm"/>}
 								{!isLiked && (
 									<FaRegHeart className='w-4 h-4 cursor-pointer text-slate-500 group-hover:text-pink-500' />
 								)}
