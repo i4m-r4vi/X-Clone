@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 import { formatPostDate } from "../../utils/date";
 
 
-const Post = ({ post }) => {
+const Post =  ({ post }) => {
 	const [comment, setComment] = useState("");
 	const { data: authUser } = useQuery({ queryKey: ["authUser"] })
 	const postOwner = post.user;
@@ -117,6 +117,8 @@ const Post = ({ post }) => {
 		},
 	});
 
+
+
 	const isMyPost = authUser._id === post.user._id;
 
 	const formattedDate = formatPostDate(post.createdAt);
@@ -195,6 +197,7 @@ const Post = ({ post }) => {
 												No comments yet 🤔 Be the first one 😉
 											</p>
 										)}
+										
 										{post.comments.map((comment) => (
 											<div key={comment._id} className='flex gap-2 items-start'>
 												<div className='avatar'>
@@ -214,7 +217,9 @@ const Post = ({ post }) => {
 													<div className='text-sm'>{comment.text}</div>
 												</div>
 											</div>
-										))}
+										)
+									)
+										}
 									</div>
 									<form
 										className='flex gap-2 items-center mt-4 border-t border-gray-600 pt-2'

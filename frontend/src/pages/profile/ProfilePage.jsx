@@ -28,8 +28,7 @@ const ProfilePage = () => {
 	const {
 		data: user,
 		isLoading,
-		refetch,
-		isRefetching,
+		refetch
 	} = useQuery({
 		queryKey: ["userProfile"],
 		queryFn: async () => {
@@ -40,9 +39,8 @@ const ProfilePage = () => {
 						"Content-Type": "application/json",
 					},
 					credentials:"include",
-				}
-					
-				);
+				})
+				
 				const data = await res.json();
 				if (!res.ok) {
 					throw new Error(data.error || "Something went wrong");
