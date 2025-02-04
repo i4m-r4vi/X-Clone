@@ -46,7 +46,7 @@ const followUnFollowUser = async (req, res) => {
                 to: id
             })
             await newNotification.save()
-            return res.status(200).json({ message: "Follow Succesfully" })
+            return res.status(200).json({message:"Follow Successfully"})
         }
     } catch (error) {
         console.log(`Error in Follow and Unfollow : ${error}`);

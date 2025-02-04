@@ -5,11 +5,11 @@ import useFollow from "../../hooks/useFollow";
 import LoadingSpinner from "./LoadingSpinner";
 
 const RightPanel = () => {
-	const {data:SuggestedUsers,isPending,isError,error} = useQuery({
-		queryKey:["suggestedUsers"],
-		queryFn:async()=>{
+	const { data: SuggestedUsers, isPending} = useQuery({
+		queryKey: ["suggestedUsers"],
+		queryFn: async () => {
 			try {
-				const res = await fetch(`${import.meta.env.VITE_APP_BACKEND}api/users/suggested/`,{
+				const res = await fetch(`${import.meta.env.VITE_APP_BACKEND}api/users/suggested/`, {
 					method: "GET",
 					credentials: "include"
 				})
@@ -26,21 +26,23 @@ const RightPanel = () => {
 			toast.error(error.message);
 		},
 	})
-	const {follow,isPending:pending} = useFollow()
+	const { follow, isPending: pending, variables } = useFollow()
 
-	if(SuggestedUsers?.length==0){
+
+
+
+	if (SuggestedUsers?.length == 0) {
 		return (
 			<div className="md:w-64 w-0"></div>
 		)
 	}
 
-	
+
 	return (
 		<div className='hidden lg:block my-4 mx-2'>
 			<div className='bg-[#16181C] p-4 rounded-md sticky top-2'>
 				<p className='font-bold'>Who to follow</p>
 				<div className='flex flex-col gap-4'>
-					{/* item */}
 					{isPending && (
 						<>
 							<RightPanelSkeleton />
@@ -72,13 +74,19 @@ const RightPanel = () => {
 								<div>
 									<button
 										className='btn bg-white text-black hover:bg-white hover:opacity-90 rounded-full btn-sm'
-										onClick={(e) => {e.preventDefault(); follow(user._id)}}
+										onClick={(e) => { e.preventDefault(); follow(user._id) }}
+										disabled={pending && variables === user._id}
 									>
-										Follow
+										{pending && variables === user._id ? (
+											<LoadingSpinner size="sm" />
+										) : (
+											"Follow"
+										)}
 									</button>
-									{pending && <LoadingSpinner size="sm"/>}
 								</div>
+
 							</Link>
+
 						))}
 				</div>
 			</div>

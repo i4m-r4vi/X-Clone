@@ -20,7 +20,7 @@ const ProfilePage = () => {
 
 	const coverImgRef = useRef(null);
 	const profileImgRef = useRef(null);
-	const {follow} = useFollow()
+	const {follow,isPending:pending} = useFollow()
 	const {username} = useParams()
 
 	const {data:authUser} = useQuery({queryKey:["authUser"]})
@@ -142,7 +142,7 @@ const ProfilePage = () => {
 										className='btn btn-outline rounded-full btn-sm'
 										onClick={() => follow(user._id)}
 									>
-										Follow
+										{pending?<LoadingSpinner size="sm"/>:"Follow"}
 									</button>
 								)}
 								{amIFollowing && (
@@ -150,7 +150,8 @@ const ProfilePage = () => {
 										className='btn btn-outline rounded-full btn-sm'
 										onClick={() => follow(user._id)}
 									>
-										Following
+										{pending?<LoadingSpinner size="sm"/>:"Following"}
+										
 									</button>
 								)}
 								{(coverImg || profileImg) && (
