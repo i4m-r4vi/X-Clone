@@ -78,8 +78,8 @@ npm run dev
 
 ## 🚀 Deployment
 
-- **Frontend:** Deployed on **Vercel** → https://x-clone-23.vercel.app/(#)
-- **Backend:** Deployed on **Render** → https://x-clone-0cpa.onrender.com/(#)
+- **Frontend:** Deployed on **Vercel** → [Live Link](https://x-clone-23.vercel.app/)
+- **Backend:** Deployed on **Render** → [API Link](https://x-clone-0cpa.onrender.com/)
 - **Database:** Hosted on **MongoDB Atlas**
 
 ## 📂 Folder Structure
