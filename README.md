@@ -27,7 +27,7 @@ X Clone is a **full-stack social media platform** inspired by X (formerly Twitte
 ### 1️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/i4m-r4vi/X-Clone.git
+git clone https://github.com/yourusername/x-clone.git
 cd x-clone
 ```
 
@@ -78,8 +78,8 @@ npm run dev
 
 ## 🚀 Deployment
 
-- **Frontend:** Deployed on **Vercel** → [Live Link](https://x-clone-23.vercel.app/)
-- **Backend:** Deployed on **Render** → [API Link](https://x-clone-0cpa.onrender.com/)
+- **Frontend:** Deployed on **Vercel** → https://x-clone-23.vercel.app/(#)
+- **Backend:** Deployed on **Render** → https://x-clone-0cpa.onrender.com/(#)
 - **Database:** Hosted on **MongoDB Atlas**
 
 ## 📂 Folder Structure
@@ -89,25 +89,25 @@ X-Clone/
  ├── backend/        # Node.js, Express.js, MongoDB, Authentication
  ├── frontend/       # React, Tailwind CSS, React Query
  ├── README.md       # Project documentation
- ├── .env    # Environment variables template
+ ├── .env.example    # Environment variables template
 ```
 
 ## 📜 API Endpoints
 
 ### 🔹 Authentication
 
-- **POST** `/api/auth/register` – Register a new user
-- **POST** `/api/auth/login` – Login user & get token
+- **POST** `/api/auth/signup` – Register a new user
+- **POST** `api/auth/signIn/` – Login user & get token
 
 ### 🔹 Posts
 
-- **GET** `/api/posts` – Fetch all posts
-- **POST** `/api/posts` – Create a new post
+- **GET** `/api/posts/getAllPost` – Fetch all posts
+- **POST** `api/posts/create` – Create a new post
 - **DELETE** `/api/posts/:id` – Delete a post
 
 ### 🔹 Users
 
-- **GET** `/api/users/:id` – Fetch user profile
+- **GET** `api/users/profile/:username` – Fetch user profile
 - **POST** `/api/users/follow/:id` – Follow/unfollow a user
 
 ## 🤝 Contributing
